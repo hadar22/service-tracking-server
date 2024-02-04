@@ -5,12 +5,13 @@ const cors = require('cors')
 
 const app = express()
 app.use(cors({
-    origin:  "http://localhost:3000"
+    AccessControlAllowOrigin:  "https://service-tracking.netlify.app"
 }))
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+const port = process.env.PORT
 const db = mysql.createConnection({
     host: process.env.HOST ,
     user: process.env.USER,
@@ -251,3 +252,4 @@ app.post('/project/update-extra', (req,res)=>{
 })
 
 app.listen(3002, console.log("Server is running..."))
+
