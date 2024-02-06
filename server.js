@@ -109,6 +109,24 @@ app.post('/project/update-installation-date', (req, res)=>{
 
 })
 
+app.post('/project/update-price', (req,res)=>{
+    const {projectID, price} = req.body
+    const sql = "UPDATE projects SET startingPrice=? WHERE projectID=?;"
+    db.query(sql,[price, projectID],(err,result)=>{
+        if(err) return res.json({message: 'error'})
+        return res.json({message:"succes"})
+    })
+})
+
+app.post('/project/update-pay-by-direct-debit', (req,res)=>{
+    const {projectID, directDebit} = req.body
+    const sql = "UPDATE projects SET directDebits=? WHERE projectID=?;"
+    db.query(sql,[directDebit, projectID],(err,result)=>{
+        if(err) return res.json({message: 'error'})
+        return res.json({message:"succes"})
+    })
+})
+
 
 
 //get all row of project
