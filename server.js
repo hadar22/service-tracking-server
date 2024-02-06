@@ -251,7 +251,7 @@ app.post('/project/invoice-number', (req,res)=>{
 //change last date that change price
 app.post('/change-last-date',(req,res)=>{
     const projectNum = req.query.projectNum
-    const lastDate = req.body
+    const lastDate = req.body.changeDate
     console.log(lastDate)
     const sql = "UPDATE projects SET lastPriceChangeDate=? WHERE projectID=?;"
     db.query(sql, [lastDate, projectNum], (err, result)=>{
