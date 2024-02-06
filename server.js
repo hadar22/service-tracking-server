@@ -5,7 +5,7 @@ const cors = require('cors')
 
 const app = express()
 app.use(cors({
-    AccessControlAllowOrigin:  "https://service-tracking.netlify.app"
+    AccessControlAllowOrigin:  ["http://localhost:3000","https://service-tracking.netlify.app"]
 }))
 
 app.use(express.json());
@@ -68,7 +68,9 @@ app.get('/pay-this-month',(req,res)=>{
 //create new project -> create new table
 app.post('/new-project',(req,res)=>{
     const {projectID, projectName,startingPrice, installationDate, directDebits} = req.body
+
     ///
+
     const date = new Date(installationDate)
     date.setFullYear(date.getFullYear()+3)
     const [d,m,y]= date.toLocaleDateString().split('/')
@@ -89,6 +91,22 @@ app.post('/new-project',(req,res)=>{
         })
         
     }) 
+})
+app.post('/project/update-installation-date', (req, res)=>{
+    const {projectID, installationDate} = req.body
+
+    const date = new Date(installationDate)
+    date.setFullYear(date.getFullYear()+3)
+    const [d,m,y]= date.toLocaleDateString().split('/')
+    const firstPriceIncrease = y+"-"+m+"-"+d
+
+    const sql = "UPDATE projects SET installationDate=?, firstPriceIncrease=? WHERE projectID=?;"
+
+    db.query(sql,[installationDate,firstPriceIncrease,projectID],(err,result)=>{
+        if(err) return res.json({message: "error"})
+        return res.json({message:"success"})
+    })
+
 })
 
 
