@@ -141,7 +141,7 @@ app.get('/get-all-rows',(req,res)=>{
 })
 app.get('/get-details',(req, res)=>{
     const projectNum = req.query.projectNum
-    const sql = "SELECT startingPrice, DATE_FORMAT(installationDate, '%d-%m-%Y') AS installationDate, DATE_FORMAT(firstPriceIncrease, '%d-%m-%Y') AS firstPriceIncrease, DATE_FORMAT(lastPriceChangeDate, '%d-%m-%Y') AS lastPriceChangeDate, currentPrice FROM projects WHERE projectID =?;"
+    const sql = "SELECT startingPrice, DATE_FORMAT(installationDate, '%d-%m-%Y') AS installationDate, DATE_FORMAT(firstPriceIncrease, '%d-%m-%Y') AS firstPriceIncrease, DATE_FORMAT(lastPriceChangeDate, '%Y-%m-%d') AS lastPriceChangeDate, currentPrice FROM projects WHERE projectID =?;"
     
     db.query(sql,[projectNum],(err, result)=>{
         if(err){
