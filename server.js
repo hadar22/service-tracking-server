@@ -267,6 +267,7 @@ app.post('/change-price',(req,res)=>{
     const projectNum = req.query.projectNum
     const currentPrice = req.body
     console.log("kk", currentPrice)
+    console.log("prp",projectNum)
     const sql = "UPDATE projects SET currentPrice=? WHERE projectID=?;"
     db.query(sql, [currentPrice, projectNum],(err,result)=>{
         if(err) return res.json({message: "errror"})
