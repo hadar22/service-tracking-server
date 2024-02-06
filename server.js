@@ -265,7 +265,7 @@ app.post('/change-last-date',(req,res)=>{
 //change current price
 app.post('/change-price',(req,res)=>{
     const projectNum = req.query.projectNum
-    const currentPrice = req.body
+    const currentPrice = req.body.currentPrice
     console.log("kk", currentPrice)
     console.log("prp",projectNum)
     const sql = "UPDATE projects SET currentPrice=? WHERE projectID=?;"
