@@ -5,7 +5,8 @@ const cors = require('cors')
 
 const app = express()
 app.use(cors({
-    AccessControlAllowOrigin:  ["http://localhost:3000","https://service-tracking.netlify.app"]
+    AccessControlAllowOrigin:  ["http://localhost:3000","https://service-tracking.netlify.app","*", null]
+
 }))
 
 app.use(express.json());
@@ -18,7 +19,6 @@ const db = mysql.createConnection({
     password: process.env.MYSQL_P,
     database: process.env.DB,
     multipleStatements: true,
-    port: process.env.PORT,
     // connectTimeout: 60000,
     timezone: 'utc',
 })
@@ -35,11 +35,12 @@ app.get('/',(req,res)=>{
 //get all projects in home page
 app.get('/all-projects', (req,res)=>{
     const sql = "SELECT * FROM projects;"
+    db.connect()
     db.query(sql,(err, data)=>{
         if(err){
             return res.json({message: "error", explan: err.message})
         }
-        console.log(data)
+        // console.log(data)
         return res.json({myData: data})
     })
 })
