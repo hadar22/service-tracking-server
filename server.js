@@ -11,13 +11,14 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const port = process.env.PORT
+
 const db = mysql.createConnection({
     host: process.env.HOST ,
     user: process.env.USER,
     password: process.env.MYSQL_P,
     database: process.env.DB,
     multipleStatements: true,
+    port: process.env.PORT,
     // connectTimeout: 60000,
     timezone: 'utc',
 })
@@ -36,8 +37,9 @@ app.get('/all-projects', (req,res)=>{
     const sql = "SELECT * FROM projects;"
     db.query(sql,(err, data)=>{
         if(err){
-            return res.json({message: "שגיאה"})
+            return res.json({message: "error", explan: err.message})
         }
+        console.log(data)
         return res.json({myData: data})
     })
 })
@@ -53,7 +55,7 @@ app.get('/pay-this-month',(req,res)=>{
     const sql = "SELECT projectID, projectName, DATE_FORMAT(lastPayment, '%d-%m-%Y') AS lastPayment, DATE_FORMAT(paymentRequest,'%Y-%m-%d') AS paymentRequest FROM projects;"
     db.query(sql, (err, data)=>{
         if(err){
-            return res.json({message: "error"})
+            return res.json({message: "error", data: err})
         }
         else{
             console.log(data)
@@ -145,8 +147,8 @@ app.get('/get-details',(req, res)=>{
     
     db.query(sql,[projectNum],(err, result)=>{
         if(err){
-            console.log(err.message)
-             return res.json({message: err})}
+            console.log(err)
+             return res.json({message: err })}
         else{
             // console.log(result[0].installationDate)
             return res.json({result})
@@ -248,15 +250,16 @@ app.post('/project/invoice-number', (req,res)=>{
     })
 })
 ///
-app.post('/price-change',(req,res)=>{
-    const {projectID, newPrice, changeDate} = req.body
-    console.log(changeDate)
-    const sql = "UPDATE projects SET lastPriceChangeDate=?, currentPrice=? WHERE projectID=?;"
-    db.query(sql, [changeDate, newPrice, projectID], (err, result)=>{
-        if(err) return res.json({message:"error"})
-        return res.json({message:"success"})
-    })
-})
+// app.post('/price-change',(req,res)=>{
+//     const {projectID, newPrice, changeDate} = req.body
+//     console.log(changeDate)
+//     const sql = "UPDATE projects SET lastPriceChangeDate=?, currentPrice=? WHERE projectID=?;"
+//     db.query(sql, [changeDate, newPrice, projectID], (err, result)=>{
+//         if(err) return res.json({message:"error"})
+        
+//         return res.json({message:"success"})
+//     })
+// })
 
 //change last date that change price
 app.post('/change-last-date',(req,res)=>{
