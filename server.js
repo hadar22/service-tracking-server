@@ -5,7 +5,8 @@ const cors = require('cors')
 
 const app = express()
 app.use(cors({
-    AccessControlAllowOrigin:  ["http://localhost:3000","https://service-tracking.netlify.app","*", null]
+    
+    origin:  ["http://localhost:3000","https://service-tracking.netlify.app"]
 
 }))
 
@@ -35,7 +36,7 @@ app.get('/',(req,res)=>{
 //get all projects in home page
 app.get('/all-projects', (req,res)=>{
     const sql = "SELECT * FROM projects;"
-    db.connect()
+    // db.connect()
     db.query(sql,(err, data)=>{
         if(err){
             return res.json({message: "error", explan: err.message})
@@ -59,7 +60,7 @@ app.get('/pay-this-month',(req,res)=>{
             return res.json({message: "error", data: err})
         }
         else{
-            console.log(data)
+            //console.log(data)
             
             const proj = data.filter((pro)=>
                 pro.paymentRequest!==null && DateFilter(pro.paymentRequest) == monthNow)
@@ -138,7 +139,7 @@ app.get('/get-all-rows',(req,res)=>{
     // console.log("getAll",projectNum)
     const sql="SELECT * FROM ??;"
     db.query(sql,[projectNum, projectNum], (err,result)=>{
-        if(err) return res.json({message: err})
+        if(err) return res.json({message: err.message})
         return res.json({result})
     })
 })
