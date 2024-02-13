@@ -14,7 +14,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 
-const db = mysql.createConnection({
+const db = mysql.createPool({
+    connectionLimit: 10,
     host: process.env.HOST ,
     user: process.env.USER,
     password: process.env.MYSQL_P,
@@ -89,7 +90,7 @@ app.post('/new-project',(req,res)=>{
     console.log("first",directDebits)
     const sql = "INSERT INTO projects (projectID, projectName, startingPrice, installationDate, directDebits, firstPriceIncrease) VALUES (?);"
     db.query(sql,[[projectID, projectName, startingPrice, installationDate, directDebits, firstPriceIncrease]], (err, result)=>{
-        if(err) return res.json({message: err})
+        if(err) return res.json({message: err.message})
         const sql2= 'CREATE TABLE ?? (requestNum INT, requestDate DATE, quarterly VARCHAR(45), extra VARCHAR(45), requestAmount INT, paymentDate DATE, paymentAmount INT, invoiceNum INT, PRIMARY KEY(requestNum));'
         console.log(sql2)
         db.query(sql2, [projectID] ,(err1, result1)=>{
