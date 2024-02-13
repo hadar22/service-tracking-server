@@ -78,8 +78,12 @@ app.post('/new-project',(req,res)=>{
     const date = new Date(installationDate)
     date.setFullYear(date.getFullYear()+3)
     const [d,m,y]= date.toLocaleDateString().split('/')
-    const firstPriceIncrease = y+"-"+m+"-"+d
     
+    const firstPriceIncrease = ""
+    if(d<10 && m<10) firstPriceIncrease = y+"-0"+m+"-0"+d
+    else if (m < 10) firstPriceIncrease = y+"-0"+m+"-"+d
+    else if (d < 10 ) firstPriceIncrease = y+"-"+m+"-0"+d
+    else firstPriceIncrease = y+"-"+m+"-"+d
     ///
     console.log(installationDate)
     console.log("first",directDebits)
