@@ -15,7 +15,7 @@ app.use(express.urlencoded({ extended: true }));
 
 
 const db = mysql.createPool({
-    connectionLimit: 10,
+    connectionLimit: 20,
     host: process.env.HOST ,
     user: process.env.USER,
     password: process.env.MYSQL_P,
@@ -23,12 +23,14 @@ const db = mysql.createPool({
     multipleStatements: true,
     // connectTimeout: 60000,
     timezone: 'utc',
+    
 })
 
 db.getConnection((err, conn)=>{
     if(err){
         throw err
     }
+    
     console.log("Connected!")
 })
 // db.connect((err)=>{
@@ -37,7 +39,7 @@ db.getConnection((err, conn)=>{
 // })
 
 app.get('/',(req,res)=>{
-    res.status(200).json({message:"Hello World"})
+    res.status(200).json({message:"The server is working"})
 })
 
 //get all projects in home page
@@ -81,12 +83,12 @@ app.post('/new-project',(req,res)=>{
     const {projectID, projectName,startingPrice, installationDate, directDebits} = req.body
 
     ///
-
+    console.log(req.body)
     const date = new Date(installationDate)
     date.setFullYear(date.getFullYear()+3)
     const [d,m,y]= date.toLocaleDateString().split('/')
     
-    const firstPriceIncrease = ""
+    let firstPriceIncrease = ""
     if(d<10 && m<10) firstPriceIncrease = y+"-0"+m+"-0"+d
     else if (m < 10) firstPriceIncrease = y+"-0"+m+"-"+d
     else if (d < 10 ) firstPriceIncrease = y+"-"+m+"-0"+d
@@ -96,11 +98,11 @@ app.post('/new-project',(req,res)=>{
     console.log("first",directDebits)
     const sql = "INSERT INTO projects (projectID, projectName, startingPrice, installationDate, directDebits, firstPriceIncrease) VALUES (?);"
     db.query(sql,[[projectID, projectName, startingPrice, installationDate, directDebits, firstPriceIncrease]], (err, result)=>{
-        if(err) return res.json({message: err.message})
+        if(err) return res.json({message: "Error:-"+err.message})
         const sql2= 'CREATE TABLE ?? (requestNum INT, requestDate DATE, quarterly VARCHAR(45), extra VARCHAR(45), requestAmount INT, paymentDate DATE, paymentAmount INT, invoiceNum INT, PRIMARY KEY(requestNum));'
-        console.log(sql2)
+        // console.log(sql2)
         db.query(sql2, [projectID] ,(err1, result1)=>{
-            if(err1) return res.json({message: err1})
+            if(err1) return res.json({message: err1.message})
             return res.json({message: 'success'})
 
         })
