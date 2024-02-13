@@ -86,18 +86,18 @@ app.post('/new-project',(req,res)=>{
     console.log(req.body)
     const date = new Date(installationDate)
     date.setFullYear(date.getFullYear()+3)
-    const [d,m,y]= date.toLocaleDateString().split('/')
+    // [d,m,y]= date.toLocaleDateString().split('/')
     
-    let firstPriceIncrease = ""
-    if(d<10 && m<10) firstPriceIncrease = y+"-0"+m+"-0"+d
-    else if (m < 10) firstPriceIncrease = y+"-0"+m+"-"+d
-    else if (d < 10 ) firstPriceIncrease = y+"-"+m+"-0"+d
-    else firstPriceIncrease = y+"-"+m+"-"+d
+    // let firstPriceIncrease = ""
+    // if(d<10 && m<10) firstPriceIncrease = y+"-0"+m+"-0"+d
+    // else if (m < 10) firstPriceIncrease = y+"-0"+m+"-"+d
+    // else if (d < 10 ) firstPriceIncrease = y+"-"+m+"-0"+d
+    // else firstPriceIncrease = y+"-"+m+"-"+d
     ///
     console.log(installationDate)
     console.log("first",directDebits)
     const sql = "INSERT INTO projects (projectID, projectName, startingPrice, installationDate, directDebits, firstPriceIncrease) VALUES (?);"
-    db.query(sql,[[projectID, projectName, startingPrice, installationDate, directDebits, firstPriceIncrease]], (err, result)=>{
+    db.query(sql,[[projectID, projectName, startingPrice, installationDate, directDebits, date]], (err, result)=>{
         if(err) return res.json({message: "Error:-"+err.message})
         const sql2= 'CREATE TABLE ?? (requestNum INT, requestDate DATE, quarterly VARCHAR(45), extra VARCHAR(45), requestAmount INT, paymentDate DATE, paymentAmount INT, invoiceNum INT, PRIMARY KEY(requestNum));'
         // console.log(sql2)
