@@ -114,12 +114,12 @@ app.post('/project/update-installation-date', (req, res)=>{
 
     const date = new Date(installationDate)
     date.setFullYear(date.getFullYear()+3)
-    const [d,m,y]= date.toLocaleDateString().split('/')
-    const firstPriceIncrease = y+"-"+m+"-"+d
+    // const [d,m,y]= date.toLocaleDateString().split('/')
+    // const firstPriceIncrease = y+"-"+m+"-"+d
 
     const sql = "UPDATE projects SET installationDate=?, firstPriceIncrease=? WHERE projectID=?;"
 
-    db.query(sql,[installationDate,firstPriceIncrease,projectID],(err,result)=>{
+    db.query(sql,[installationDate,date,projectID],(err,result)=>{
         if(err) return res.json({message: "error"})
         return res.json({message:"success"})
     })
