@@ -25,10 +25,16 @@ const db = mysql.createPool({
     timezone: 'utc',
 })
 
-db.connect((err)=>{
-    if(err) throw err
+db.getConnection((err, conn)=>{
+    if(err){
+        throw err
+    }
     console.log("Connected!")
 })
+// db.connect((err)=>{
+//     if(err) throw err
+//     console.log("Connected!")
+// })
 
 app.get('/',(req,res)=>{
     res.status(200).json({message:"Hello World"})
