@@ -176,7 +176,7 @@ app.get('/get-details',(req, res)=>{
 app.post('/add-new-request',(req,res)=>{
     const {projectNum, requestNum, requestDate, quarterly, extra, requestAmount} = req.body
     //let projectNum = req.query.projectNum
-    console.log(projectNum)
+    console.log(quarterly)
     const sql = "INSERT INTO ?? (requestNum, requestDate, quarterly, extra, requestAmount) VALUES (?,?,?,?,?);"
     db.query(sql,[projectNum, requestNum, requestDate, quarterly, extra, requestAmount], (err,result)=>{
         if(err) {
@@ -265,16 +265,16 @@ app.post('/project/invoice-number', (req,res)=>{
     })
 })
 ///
-// app.post('/price-change',(req,res)=>{
-//     const {projectID, newPrice, changeDate} = req.body
-//     console.log(changeDate)
-//     const sql = "UPDATE projects SET lastPriceChangeDate=?, currentPrice=? WHERE projectID=?;"
-//     db.query(sql, [changeDate, newPrice, projectID], (err, result)=>{
-//         if(err) return res.json({message:"error"})
+app.post('/price-change',(req,res)=>{
+    const {projectID, newPrice, changeDate} = req.body
+    console.log(changeDate)
+    const sql = "UPDATE projects SET lastPriceChangeDate=?, currentPrice=? WHERE projectID=?;"
+    db.query(sql, [changeDate, newPrice, projectID], (err, result)=>{
+        if(err) return res.json({message:"error"})
         
-//         return res.json({message:"success"})
-//     })
-// })
+        return res.json({message:"success"})
+    })
+})
 
 //change last date that change price
 app.post('/change-last-date',(req,res)=>{
@@ -290,18 +290,18 @@ app.post('/change-last-date',(req,res)=>{
         return res.json({message: 'success'})
     })
 })
-//change current price
-app.post('/change-price',(req,res)=>{
-    const projectNum = req.query.projectNum
-    const currentPrice = req.body.currentPrice
-    console.log("kk", currentPrice)
-    console.log("prp",projectNum)
-    const sql = "UPDATE projects SET currentPrice=? WHERE projectID=?;"
-    db.query(sql, [currentPrice, projectNum],(err,result)=>{
-        if(err) return res.json({message: "errror"})
-        return res.json({message:"success"})
-    })
-})
+// //change current price
+// app.post('/change-price',(req,res)=>{
+//     const projectNum = req.query.projectNum
+//     const currentPrice = req.body.currentPrice
+//     console.log("kk", currentPrice)
+//     console.log("prp",projectNum)
+//     const sql = "UPDATE projects SET currentPrice=? WHERE projectID=?;"
+//     db.query(sql, [currentPrice, projectNum],(err,result)=>{
+//         if(err) return res.json({message: "errror"})
+//         return res.json({message:"success"})
+//     })
+// })
 
 app.post('/project/update-extra', (req,res)=>{
     const {projectNum,  requestNum ,extra} = req.body
