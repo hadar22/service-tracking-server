@@ -329,7 +329,8 @@ app.get('/projects-passed-on-to-us',(req,res)=>{
     })
 })
 app.post('/new-project-passed-our-service',(req,res)=>{
-    const {name} = req.body
+    const name = req.body.projectName
+    
     const sql = "INSERT INTO projectsPassedOnToUs (projectName) VALUES (?);"
     db.query(sql ,[name], (err,result)=>{
         if(err) return res.json({message: 'error', explan: err})
