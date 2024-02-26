@@ -266,13 +266,13 @@ app.post('/project/invoice-number', (req,res)=>{
 })
 
 ///
-app.post('/price-change',(req,res)=>{
-    const {projectID, newPrice, changeDate} = req.body
-    console.log(changeDate)
+app.post('/projects/price-change',(req,res)=>{
+    const {projectID,lastPriceChangeDate,currentPrice} = req.body
+    //console.log(currentPrice)
     const sql = "UPDATE projects SET lastPriceChangeDate=?, currentPrice=? WHERE projectID=?;"
-    db.query(sql, [changeDate, newPrice, projectID], (err, result)=>{
+    db.query(sql, [lastPriceChangeDate, currentPrice, projectID], (err, result)=>{
         if(err) return res.json({message:"error"})
-        
+        //console.log(result)
         return res.json({message:"success"})
     })
 })
