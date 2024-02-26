@@ -264,6 +264,7 @@ app.post('/project/invoice-number', (req,res)=>{
         return res.json({message: 'success'})
     })
 })
+
 ///
 app.post('/price-change',(req,res)=>{
     const {projectID, newPrice, changeDate} = req.body
@@ -312,6 +313,26 @@ app.post('/project/update-extra', (req,res)=>{
             console.log(err)
             return res.json({message: 'error'})
         }
+        return res.json({message: 'success'})
+    })
+})
+app.post('/setPayment',(req,res)=>{
+    const requestDate = req.query.requestDate
+    const {payment} = req.body
+    console.log(payment)
+})
+app.get('/projects-passed-on-to-us',(req,res)=>{
+    const sql = "SELECT * from projectsPassedOnToUs;"
+    db.query(sql,(err,result)=>{
+        if(err) return res.json({message: "error"})
+        return res.json({result: result})
+    })
+})
+app.post('/new-project-passed-our-service',(req,res)=>{
+    const {name} = req.body
+    const sql = "INSERT INTO projectsPassedOnToUs (projectName) VALUES (?);"
+    db.query(sql ,[name], (err,result)=>{
+        if(err) return res.json({message: 'error'})
         return res.json({message: 'success'})
     })
 })
