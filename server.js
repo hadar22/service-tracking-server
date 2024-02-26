@@ -325,7 +325,7 @@ app.get('/projects-passed-on-to-us',(req,res)=>{
     const sql = "SELECT * from projectsPassedOnToUs;"
     db.query(sql,(err,result)=>{
         if(err) return res.json({message: "error"})
-        return res.json({result: result})
+        return res.json({message: 'success',result: result})
     })
 })
 app.post('/new-project-passed-our-service',(req,res)=>{
