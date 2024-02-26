@@ -332,7 +332,7 @@ app.post('/new-project-passed-our-service',(req,res)=>{
     const {name} = req.body
     const sql = "INSERT INTO projectsPassedOnToUs (projectName) VALUES (?);"
     db.query(sql ,[name], (err,result)=>{
-        if(err) return res.json({message: 'error'})
+        if(err) return res.json({message: 'error', explan: err})
         return res.json({message: 'success'})
     })
 })
