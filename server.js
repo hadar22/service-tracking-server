@@ -316,10 +316,14 @@ app.post('/project/update-extra', (req,res)=>{
         return res.json({message: 'success'})
     })
 })
-app.post('/setPayment',(req,res)=>{
-    const requestDate = req.query.requestDate
-    const {payment} = req.body
-    console.log(payment)
+app.post('/project-passed/setPayment',(req,res)=>{
+    const projectName = req.query.projectName
+    const {tenantName, paymentDate, paymentAmount, invoiceNum} = req.body
+    const sql = "INSERT INTO ?? (tenantName, paymentDate, paymentAmount, invoiceNum) VALUES (?,?,?,?);"
+    db.query(sql, [projectName, tenantName, paymentDate, paymentAmount, invoiceNum], (err,result)=>{
+        if(err) return res.json({message: 'error'})
+        return res.json({message: 'success'})
+    })
 })
 app.get('/projects-passed-on-to-us',(req,res)=>{
     const sql = "SELECT * from projectsPassedOnToUs;"
@@ -335,13 +339,21 @@ app.post('/new-project-passed-our-service',(req,res)=>{
     db.query(sql ,[name], (err,result)=>{
         if(err) return res.json({message: 'error', explan: err})
         else{
-            const sql2 = 'CREATE TABLE ?? (ID INT, tenantName VARCHAR(45),paymentDate DATE, paymentAmount INT, invoiceNum INT, PRIMARY KEY(ID));'
+            const sql2 = 'CREATE TABLE ?? (ID INT AUTO_INCREMENT, tenantName VARCHAR(45),paymentDate DATE, paymentAmount INT, invoiceNum INT, PRIMARY KEY(ID));'
             db.query(sql2, [name], (err2, result2)=>{
                 if(err2) return res.json({massage: "error2"})
                 return res.json({message: 'success'})
             })
         }
     })
+})
+app.get('/projects-passed/get-all-rows', (req,res)=>{
+    const projectName = req.query.projectName
+    const sql="SELECT * FROM ??;"
+    db.query(sql,[projectName], (err,result)=>{
+        if(err) return res.json({message: err.message})
+        return res.json({result})
+    }) 
 })
 
 app.listen(3002, console.log("Server is running..."))
