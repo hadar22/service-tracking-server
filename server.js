@@ -319,6 +319,7 @@ app.post('/project/update-extra', (req,res)=>{
 app.post('/project-passed/setPayment',(req,res)=>{
     const projectName = req.query.projectName
     const {tenantName, paymentDate, paymentAmount, invoiceNum} = req.body
+    console.log(projectName,tenantName)
     const sql = "INSERT INTO ?? (tenantName, paymentDate, paymentAmount, invoiceNum) VALUES (?,?,?,?);"
     db.query(sql, [projectName, tenantName, paymentDate, paymentAmount, invoiceNum], (err,result)=>{
         if(err) return res.json({message: 'error'})
