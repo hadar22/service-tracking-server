@@ -334,7 +334,13 @@ app.post('/new-project-passed-our-service',(req,res)=>{
     const sql = "INSERT INTO projectsPassedOnToUs (projectName) VALUES (?);"
     db.query(sql ,[name], (err,result)=>{
         if(err) return res.json({message: 'error', explan: err})
-        return res.json({message: 'success'})
+        else{
+            const sql2 = 'CREATE TABLE ?? (ID INT, tenantName VARCHAR(45),paymentDate DATE, paymentAmount INT, invoiceNum INT, PRIMARY KEY(ID));'
+            db.query(sql2, [name], (err2, result2)=>{
+                if(err2) return res.json({massage: "error2"})
+                return res.json({message: 'success'})
+            })
+        }
     })
 })
 
