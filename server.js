@@ -323,7 +323,14 @@ app.post('/project-passed/setPayment',(req,res)=>{
     const sql = "INSERT INTO ?? (tenantName, paymentDate, paymentAmount, invoiceNum) VALUES (?,?,?,?);"
     db.query(sql, [projectName, tenantName, paymentDate, paymentAmount, invoiceNum], (err,result)=>{
         if(err) return res.json({message: 'error'})
-        return res.json({message: 'success'})
+        else{
+            const sql1= "UPDATE projectsPassedOnToUs SET lastPaymentDate=? WHERE projectName=?;"
+            db.query(sql1, [paymentDate, projectName],(err1, res1)=>{
+                if(err1) return res.json({message: "error"})
+               return res.json({message: 'success'})
+            })
+        }
+        
     })
 })
 app.get('/projects-passed-on-to-us',(req,res)=>{
@@ -356,6 +363,13 @@ app.get('/projects-passed/get-all-rows', (req,res)=>{
         return res.json({result})
     }) 
 })
-
+app.post('/project-passed/last-date',(req,res)=>{
+    const {projectName, lastPaymentDate} = req.body
+    const sql = "UPDATE projectsPassedOnToUs SET lastPaymentDate=? WHERE projectName=?;"
+    db.query(sql, [lastPaymentDate, projectName] ,(err, result)=>{
+        if(err) return res.json({message: 'error'})
+        return res.json({message:'success'})
+    })
+})
 app.listen(3002, console.log("Server is running..."))
 
