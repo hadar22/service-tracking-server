@@ -44,7 +44,7 @@ app.get('/',(req,res)=>{
 
 //get all projects in home page
 app.get('/all-projects', (req,res)=>{
-    const sql = "SELECT * FROM projects;"
+    const sql = "SELECT projectID, projectName, currentPrice, DATE_FORMAT(lastPayment, '%d-%m-%Y') AS lastPayment, DATE_FORMAT(paymentRequest, '%d-%m-%Y') AS paymentRequest, nextPaymentTime, directDebits FROM projects;"
     // db.connect()
     db.query(sql,(err, data)=>{
         if(err){
@@ -54,28 +54,26 @@ app.get('/all-projects', (req,res)=>{
         return res.json({myData: data})
     })
 })
-const DateFilter=(date)=>{
-    const monthNew = new Date(date)
-    monthNew.setMonth(monthNew.getMonth()+3)
-    //console.log("zzz",monthNew.getMonth()+1)
-    return monthNew.getMonth()+1
-}
+
 //get only projects that have to pay this month
-app.get('/pay-this-month',(req,res)=>{
-    const monthNow = new Date().getMonth() + 1
-    const sql = "SELECT projectID, projectName, DATE_FORMAT(lastPayment, '%d-%m-%Y') AS lastPayment, DATE_FORMAT(paymentRequest,'%Y-%m-%d') AS paymentRequest FROM projects;"
+
+app.get('/pay-this-month', (req,res)=>{
+    const monthNow = new Date().getMonth()
+    const months = ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני", "יולי", "אוגוסט", "ספטמבר", "אוקוטובר", "נובמבר", "דצמבר"];
+    
+    const sql = "SELECT projectID, projectName, DATE_FORMAT(paymentRequest, '%d-%m-%Y') AS paymentRequest, nextPaymentTime FROM projects;"
     db.query(sql, (err, data)=>{
         if(err){
-            return res.json({message: "error", data: err})
-        }
-        else{
-            //console.log(data)
-            
-            const proj = data.filter((pro)=>
-                pro.paymentRequest!==null && DateFilter(pro.paymentRequest) == monthNow)
-            return res.json({message:'success', result: proj})
+            console.log(err);
+            return res.json({message: "error", data:"err"})
+        }else{
+            const projects = data.filter((pro)=>
+                pro.paymentRequest !== null && months[monthNow] === pro.nextPaymentTime
+            ) 
+            return res.json({message:'success', result: projects})
         }
     })
+
 })
 
 //create new project -> create new table
@@ -88,12 +86,6 @@ app.post('/new-project',(req,res)=>{
     date.setFullYear(date.getFullYear()+3)
     // [d,m,y]= date.toLocaleDateString().split('/')
     
-    // let firstPriceIncrease = ""
-    // if(d<10 && m<10) firstPriceIncrease = y+"-0"+m+"-0"+d
-    // else if (m < 10) firstPriceIncrease = y+"-0"+m+"-"+d
-    // else if (d < 10 ) firstPriceIncrease = y+"-"+m+"-0"+d
-    // else firstPriceIncrease = y+"-"+m+"-"+d
-    ///
     console.log(installationDate)
     console.log("first",directDebits)
     const sql = "INSERT INTO projects (projectID, projectName, startingPrice, installationDate, directDebits, firstPriceIncrease) VALUES (?);"
@@ -114,8 +106,7 @@ app.post('/project/update-installation-date', (req, res)=>{
 
     const date = new Date(installationDate)
     date.setFullYear(date.getFullYear()+3)
-    // const [d,m,y]= date.toLocaleDateString().split('/')
-    // const firstPriceIncrease = y+"-"+m+"-"+d
+    
 
     const sql = "UPDATE projects SET installationDate=?, firstPriceIncrease=? WHERE projectID=?;"
 
@@ -158,7 +149,7 @@ app.get('/get-all-rows',(req,res)=>{
 })
 app.get('/get-details',(req, res)=>{
     const projectNum = req.query.projectNum
-    const sql = "SELECT startingPrice, DATE_FORMAT(installationDate, '%d-%m-%Y') AS installationDate, DATE_FORMAT(firstPriceIncrease, '%d-%m-%Y') AS firstPriceIncrease, DATE_FORMAT(lastPriceChangeDate, '%Y-%m-%d') AS lastPriceChangeDate, currentPrice FROM projects WHERE projectID =?;"
+    const sql = "SELECT startingPrice, DATE_FORMAT(installationDate, '%d-%m-%Y') AS installationDate, DATE_FORMAT(firstPriceIncrease, '%d-%m-%Y') AS firstPriceIncrease, DATE_FORMAT(lastPriceChangeDate, '%d-%m-%Y') AS lastPriceChangeDate, currentPrice FROM projects WHERE projectID =?;"
     
     db.query(sql,[projectNum],(err, result)=>{
         if(err){
@@ -175,16 +166,31 @@ app.get('/get-details',(req, res)=>{
 //add new payment request
 app.post('/add-new-request',(req,res)=>{
     const {projectNum, requestNum, requestDate, quarterly, extra, requestAmount} = req.body
-    //let projectNum = req.query.projectNum
+
     console.log(quarterly)
     const sql = "INSERT INTO ?? (requestNum, requestDate, quarterly, extra, requestAmount) VALUES (?,?,?,?,?);"
     db.query(sql,[projectNum, requestNum, requestDate, quarterly, extra, requestAmount], (err,result)=>{
         if(err) {
             console.log(err)
             return res.json({message: "error"})}
-        else{
-            const sql2="UPDATE projects SET paymentRequest=? WHERE projectID=?"
-            db.query(sql2,[requestDate,projectNum],(error, ans)=>{
+        else if(quarterly !== "other"){
+            console.log(quarterly)
+            const months = ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני", "יולי", "אוגוסט", "ספטמבר", "אוקוטובר", "נובמבר", "דצמבר"];
+            const [,e] = quarterly.split("-")
+            const sql2="UPDATE projects SET paymentRequest=?, nextPaymentTime=? WHERE projectID=?"
+            db.query(sql2,[requestDate, months[e], projectNum],(error, ans)=>{
+                if(error){
+                    console.log(err)
+                    return res.json({message: "error"})
+                }
+                console.log(ans);
+                return res.json({message: "success"})
+            })
+        }
+        else {
+            console.log(quarterly)
+            const sql3="UPDATE projects SET paymentRequest=? WHERE projectID=?"
+            db.query(sql3,[requestDate, projectNum],(error, ans)=>{
                 if(error){
                     console.log(err)
                     return res.json({message: "error"})
@@ -231,13 +237,21 @@ app.post('/project/payment-amount-update', (req,res)=>{
 
 app.post('/project/update-date-send', (req,res)=>{
     const {projectNum,  requestNum ,dateSend} = req.body
+    console.log(dateSend)
     const sql = "UPDATE ?? SET requestDate=? WHERE requestNum=?;"
     db.query(sql, [projectNum, dateSend, requestNum],(err, result)=>{
         if(err){
             console.log(err)
             return res.json({message: 'error'})
         }
-        return res.json({message: 'success'})
+        else{
+            const sql2 = "UPDATE projects SET paymentRequest=? WHERE projectID=?;"
+            db.query(sql2, [dateSend,projectNum],(err2,result2)=>{
+                if(err2) return res.json({message: "error2"})
+                else return res.json({message: 'success'})
+            })
+        }
+        
     })
 })
 
@@ -333,10 +347,15 @@ app.post('/project-passed/setPayment',(req,res)=>{
         
     })
 })
+// run all the time
 app.get('/projects-passed-on-to-us',(req,res)=>{
-    const sql = "SELECT * from projectsPassedOnToUs;"
+    
+    const sql = "SELECT projectID, projectName, monthlyPrice, DATE_FORMAT(lastPaymentDate, '%d-%m-%Y') AS lastPaymentDate from projectsPassedOnToUs;"
+
     db.query(sql,(err,result)=>{
-        if(err) return res.json({message: "error"})
+        if(err){
+            console.log(err);
+             return res.json({message: "error"})}
         return res.json({message: 'success',result: result})
     })
 })
