@@ -390,5 +390,13 @@ app.post('/project-passed/last-date',(req,res)=>{
         return res.json({message:'success'})
     })
 })
+app.get('/projects/number-of-elevators',(req,res)=>{
+    const sql = "SELECT (SELECT COUNT(*) FROM projects) AS count1, (SELECT COUNT(*) FROM projectsPassedOnToUs) AS count2 FROM dual;"
+    db.query(sql,(err, result)=>{
+        if(err) return res.json({message: 'error'})
+        return res.json({result})
+    })
+
+})
 app.listen(3002, console.log("Server is running..."))
 
