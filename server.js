@@ -222,6 +222,15 @@ app.post('/project/payment-date-update', (req,res)=>{
         
     })
 })
+app.post('/new-debt',(req, res)=>{
+    const newDebt = req.body
+    const projectName = req.query.projectName
+    const sql = "UPDATE projects SET debt=? WHERE projectID=?;"
+    db.query(sql, [newDebt, projectName],(err, result)=>{
+        if(err) return res.json({message: 'error'})
+        return res.json({message: 'success'})
+    })
+})
 app.post('/project/payment-amount-update', (req,res)=>{
     const {projectNum,  requestNum ,paymentAmount} = req.body
     const sql = "UPDATE ?? SET paymentAmount=? WHERE requestNum=?;"
