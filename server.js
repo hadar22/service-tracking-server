@@ -44,7 +44,7 @@ app.get('/',(req,res)=>{
 
 //get all projects in home page
 app.get('/all-projects', (req,res)=>{
-    const sql = "SELECT projectID, projectName, currentPrice, DATE_FORMAT(lastPayment, '%d-%m-%Y') AS lastPayment, DATE_FORMAT(paymentRequest, '%d-%m-%Y') AS paymentRequest, nextPaymentTime, directDebits FROM projects;"
+    const sql = "SELECT projectID, projectName, currentPrice, DATE_FORMAT(lastPayment, '%d-%m-%Y') AS lastPayment, DATE_FORMAT(paymentRequest, '%d-%m-%Y') AS paymentRequest, nextPaymentTime, directDebits, debt FROM projects;"
     // db.connect()
     db.query(sql,(err, data)=>{
         if(err){
@@ -229,7 +229,6 @@ app.post('/new-debt',(req, res)=>{
     db.query(sql, [debt, projectNum],(err, result)=>{
         if(err) return res.json({message: 'error'})
         else{
-            console.log(result)
             return res.json({message: 'success'})
     }
         
