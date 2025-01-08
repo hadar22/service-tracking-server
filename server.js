@@ -224,7 +224,7 @@ app.post('/project/payment-date-update', (req,res)=>{
 })
 app.post('/new-debt',(req, res)=>{
     const {projectNum, debt} = req.body
-    console.log(debt);
+    console.log(typeof debt);
     const sql = "UPDATE projects SET debt=? WHERE projectID=?;"
     db.query(sql, [debt, projectNum],(err, result)=>{
         if(err) return res.json({message: 'error'})
